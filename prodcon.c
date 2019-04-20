@@ -1,67 +1,41 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+struct shmem_structure
+ {
+     int field1;
+     int field2;
 
-int mutex=1,full=0,empty=8,x=0;
+ };
 
-int main()
+
+ int main()
+ {
+     struct shmem_structure *shptr;
+     int get_shared_memory_structure(struct shmem_structure *shptr);
+     int produceNext();
+     int consumeNext();
+     int consumed;
+while(1)
 {
-	int n;
-	void producenext();
-	void consumenext();
-	int wait(int);
-	int signal(int);
-	printf("\n1.Producer\n2.Consumer\n3.Exit");
-	while(1)
-	{
-		printf("\nEnter your choice:");
-		scanf("%d",&n);
-		switch(n)
-		{
-			case 1:	if((mutex==1)&&(empty!=0))
-						producenext();
-					else
-						printf("Buffer is full!!");
-					break;
-			case 2:	if((mutex==1)&&(full!=0))
-						consumenext();
-					else
-						printf("Buffer is empty!!");
-					break;
-			case 3:
-					exit(0);
-					break;
-		}
-	}
 
-	return 0;
+     int produced =  produceNext();
+     while(shptr->field2 == 0);
+     consumed=shptr->field1;
+     consumeNext(consumed);
+     shptr->field2 = 0;
+
 }
-
-int wait(int s)
+while(1)
 {
-	return (--s);
-}
+     int consumed;
+     int produced = produceNext();
+     shptr->field1=produced;
+     shptr->field2 = 1;
+     while(shptr->field2 == 1);
+     consumeNext(consumed);
 
-int signal(int s)
-{
-	return(++s);
 }
+return 0;
 
-void producenext()
-{
-	mutex=wait(mutex);
-	full=signal(full);
-	empty=wait(empty);
-	x++;
-	printf("\nProducer produces the item %d",x);
-	mutex=signal(mutex);
-}
-
-void consumenext()
-{
-	mutex=wait(mutex);
-	full=wait(full);
-	empty=signal(empty);
-	printf("\nConsumer consumes item %d",x);
-	x--;
-	mutex=signal(mutex);
-}
+ }
