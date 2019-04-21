@@ -1,41 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/shm.h>
 #include <unistd.h>
-struct shmem_structure
- {
-     int field1;
-     int field2;
+#include <pthread.h>
 
- };
+void *produceNext();
+void *consumeNext();
+int x=1;
 
+int produced,consumed;
+pthread_mutex_t l;
 
- int main()
- {
-     struct shmem_structure *shptr;
-     int get_shared_memory_structure(struct shmem_structure *shptr);
-     int produceNext();
-     int consumeNext();
-     int consumed;
-while(1)
+int main()
 {
 
-     int produced =  produceNext();
-     while(shptr->field2 == 0);
-     consumed=shptr->field1;
-     consumeNext(consumed);
-     shptr->field2 = 0;
+    pthread_mutex_init(&l,NULL);
+    pthread_t p,c;
+    pthread_create(&p,NULL,produceNext(),NULL);
+    pthread_create(&c,NULL,consumeNext(),NULL);
+    pthread_join(p,NULL);
+    pthread_join(c,NULL);
+
 
 }
-while(1)
+    void *produceNext()
+    {
+        for (int i = 0; i <5; i++) {
+
+
+        pthread_mutex_lock(&l);
+        x++;
+        produced=x;
+        printf("%d",produced);
+        pthread_mutex_unlock(&l);
+        }
+
+
+    }
+    void *consumeNext()
 {
-     int consumed;
-     int produced = produceNext();
-     shptr->field1=produced;
-     shptr->field2 = 1;
-     while(shptr->field2 == 1);
-     consumeNext(consumed);
+    for (int i = 0; i < 5; i++) {
 
-}
-return 0;
+        pthread_mutex_lock(&l);
+        consumed=x;
+        printf("%d",consumed);
+        x--;
+        pthread_mutex_unlock(&l);
+    }
 
- }
+
+    }
+
+
+
+
