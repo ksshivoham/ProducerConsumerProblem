@@ -1,6 +1,6 @@
 # include <stdio.h>
 # include <pthread.h>
-# define BufferSize 10
+# define BufferSize 8
 
 void *Producer();
 void *Consumer();
